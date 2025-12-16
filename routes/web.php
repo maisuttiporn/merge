@@ -56,3 +56,16 @@ use App\Http\Controllers\PaymentController;
 Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
 Route::get('/payment/desc/{user_id}',[PaymentController::class, 'desc'])->name('payment.desc');
 Route::post('/payment/update/{user_id}/{payerid}', [PaymentController::class,'update'])->name('payment.update');
+
+
+use App\Http\Controllers\InvController;
+Route::get('/inv/index/{inv_id?}', [InvController::class,'index'])->name('inv.index');
+Route::get('/inv/create', [InvController::class,'create'])->name('inv.create');
+Route::post('/inv', [InvController::class,'store'])->name('inv.store');
+Route::get('/inv/{inv_id}/edit', [InvController::class,'edit'])->name('inv.edit');
+Route::put('/inv/{inv_id}', [InvController::class,'update'])->name('inv.update');
+
+
+
+use App\Http\Controllers\InvdescController;
+Route::post('/invdesc', [InvdescController::class,'store'])->name('invdesc.store');

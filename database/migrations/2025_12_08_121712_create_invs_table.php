@@ -15,6 +15,13 @@ class CreateInvsTable extends Migration
     {
         Schema::create('invs', function (Blueprint $table) {
             $table->id();
+
+
+            $table->string('desc');
+            $table->string('imgpath')->nullable();
+            $table->integer('amount')->default(0);
+
+
             $table->timestamps();
         });
     }

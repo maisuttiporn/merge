@@ -24,7 +24,7 @@ class CreateCheckindescsTable extends Migration
             $table->string('paidstat')->default('0'); // 0 ยังไม่เคลียร์
 
             $table->string('check')->default('0');
-
+            $table->string('updatecode')->default('0');
 
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('checkin_id');

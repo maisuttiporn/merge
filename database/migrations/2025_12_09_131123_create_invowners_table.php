@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateInvdescsTable extends Migration
+class CreateInvownersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,12 @@ class CreateInvdescsTable extends Migration
      */
     public function up()
     {
-        Schema::create('invdescs', function (Blueprint $table) {
+        Schema::create('invowners', function (Blueprint $table) {
             $table->id();
 
-            $table->string('note')->nullable();
-            $table->string('type'); // 0=+ 1=-
             $table->integer('amount');
-
-            $table->foreignId('user_id');
             $table->foreignId('inv_id');
+            $table->foreignId('user_id');
 
             $table->timestamps();
         });
@@ -34,6 +31,6 @@ class CreateInvdescsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('invdescs');
+        Schema::dropIfExists('invowners');
     }
 }

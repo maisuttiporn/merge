@@ -174,6 +174,9 @@
                     <strong class="text-dark">{{ config('app.name', 'Laravel') }}</strong></a>
             </h5>
             <nav class="my-2 my-md-0 mr-md-3 font-weight-bold">
+                <a class="p-2 text-dark" href="{{ route('inv.index') }}">
+                    <i class="fa-solid fa-vault"></i>
+                    ตู้แก๊ง</a>
                 <a class="p-2 text-dark" href="{{ route('checkin.check') }}">
                     <i class="fa-solid fa-list-check"></i>
                     เช็คชื่อ</a>
