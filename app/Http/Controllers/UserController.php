@@ -9,7 +9,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        $users = User::orderByRaw('CONVERT(slotnumber, SIGNED)')->get();
         return View('user.index', compact('users'));
     }
 
@@ -31,7 +31,7 @@ class UserController extends Controller
             'fname' => 'required|max:100',
             'lname' => 'required|max:100',
             'phone' => 'required|max:100',
-            'homenumber' => 'required|gt:0',
+            // 'homenumber' => 'required|gt:0',
         ]);
 
 
@@ -61,7 +61,7 @@ class UserController extends Controller
             'fname' => 'required|max:100',
             'lname' => 'required|max:100',
             'phone' => 'required|max:100',
-            'homenumber' => 'required|gt:0',
+            // 'homenumber' => 'required|gt:0',
         ]);
 
         $user = User::find($id);

@@ -9,7 +9,7 @@ class CheckinController extends Controller
 {
     public function index()
     {
-        $checkins = \App\Models\Checkin::orderBy('id', 'desc')->get();
+        $checkins = \App\Models\Checkin::orderBy('checkin_date', 'desc')->get();
 
         return view("checkin.index", compact("checkins"));
     }
@@ -30,7 +30,14 @@ class CheckinController extends Controller
 
 
         if ($date == '') {
-            $date = \Carbon\Carbon::now()->format('Y-m-d');
+
+            if (\Carbon\Carbon::now()->format('H') < 6) {
+                $date = \Carbon\Carbon::yesterday()->format('Y-m-d');
+            } else {
+                $date = \Carbon\Carbon::now()->format('Y-m-d');
+            }
+
+
         } else {
             \Carbon\Carbon::parse($date)->format('Y-m-d');
         }

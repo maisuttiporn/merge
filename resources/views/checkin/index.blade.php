@@ -31,6 +31,9 @@
                     </thead>
 
                     @foreach ($checkins as $item)
+                        @if ($item->checkindesc()->where('check', 1)->count() > 0)
+                        
+                        
                         <tr @if($item->checkin_win == '1') style="background-color: lightgreen;" @endif>
                             <td>
                                 <strong>{{ thaidate('d-m-Y H:i', $item->checkin_date, false) }}</strong>
@@ -43,11 +46,17 @@
                             <td>
                                 {{ $item->checkin_itemdesc }}
                             </td>
-                            <td>
+                            <td style="font-size: 13px;">
                                 @php $i=0; @endphp
                                 @foreach ($item->checkindesc->where('check', '1')->sortBy('homenumber') as $checkindesc)
                                     @if($i != $checkindesc->homenumber)
-                                        <u class="mb-1"><h5 class="mb-0 ">บ้าน {{ $checkindesc->homenumber }}</h5></u>
+                                        <u class="mb-1">
+                                            @if ($i > 0)
+                                            <br>
+                                            @endif
+                                            <small class="mb-0 ">
+                                            บ้าน {{ $checkindesc->homenumber }}</small>
+                                        </u>
                                         @php $i = $checkindesc->homenumber;  @endphp
                                     @endif
                                     {{ $loop->iteration }}.{{ $checkindesc->fname }}
@@ -77,6 +86,8 @@
                                 </a>
                             </td>
                         </tr>
+
+                        @endif
                     @endforeach
                 </table>
 

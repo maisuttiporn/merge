@@ -28,9 +28,71 @@
 
                     </thead>
 
-                    @foreach ($users as $user)
+                    @for ($i=1; $i<=30; $i++)
+                        <tr  @if (count($users->where('slotnumber', $i)) == 0 ) style="background-color: #fdd49a;" @endif>
+                            <td>{{ $i }}</td>
+                            <td>
+                                @if (count($users->where('slotnumber', $i)) > 0 )
+                                 {{ $users->where('slotnumber', $i)->first()->fname }}
+                                @endif
+                            </td>
+                            <td>
+                                @if (count($users->where('slotnumber', $i)) > 0 )
+                                 {{ $users->where('slotnumber', $i)->first()->lname }}
+                                @endif
+                            </td>
+                            <td>
+                                @if (count($users->where('slotnumber', $i)) > 0 )
+                                 {{ $users->where('slotnumber', $i)->first()->phone }}
+                                @endif
+                            </td>
+                            <td>
+                                @if (count($users->where('slotnumber', $i)) > 0 )
+                                 {{ $users->where('slotnumber', $i)->first()->homesup() }}
+                                @endif
+                            </td>
+                            <td>@if (count($users->where('slotnumber', $i)) > 0 )
+                                 {{ $users->where('slotnumber', $i)->first()->homenumber }}
+                                @endif</td>
+                            <td>@if (count($users->where('slotnumber', $i)) > 0 )
+                                 {{ $users->where('slotnumber', $i)->first()->slotactive() }}
+                                @endif</td>
+                            <td>
+                                @if (count($users->where('slotnumber', $i)) > 0 )
+                                    <a href="{{ route('user.edit', $users->where('slotnumber', $i)->first()->id) }}" class="btn btn-orange btn-sm">
+                                    แก้ไข</a>
+
+
+                                    <form style="display: inline-block;" method="post"
+                                        action="{{ route('user.destroy', $users->where('slotnumber', $i)->first()->id) }}">
+                                        @csrf
+                                        @method('delete')
+                                        <button type="submit" class="btn btn-danger btn-sm " onclick="return confirm('ลบ ?')"
+                                        @if (\App\Models\Checkindesc::where('user_id', $users->where('slotnumber', $i)->first()->id)->get()->count() > 0) disabled @endif
+                                        >
+                                            ลบ
+                                        </button>
+                                    </form>
+
+                                @endif
+
+
+                            
+                            </td>
+                        </tr>
+                    @endfor
+
+
+
+                    @foreach ($users->where('slotnumber', '99') as $user)
                         <tr>
-                            <td>{{ $user->slotnumber }}</td>
+                            <td>
+                                @if ($user->slotnumber != '99')
+                                {{ $user->slotnumber }}
+                                
+                                @endif
+
+                            </td>
                             <td>{{ $user->fname }}</td>
                             <td>{{ $user->lname }}</td>
                             <td>{{ $user->phone }}</td>

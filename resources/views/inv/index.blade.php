@@ -160,7 +160,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $invowner->user->fname }}</td>
-                                <td>{{ $invowner->amount }}</td>
+                                <td>{{ number_format($invowner->amount, 0) }}</td>
                                 <td></td>
                             </tr>
                         @endforeach
@@ -187,7 +187,7 @@
                                     @else
                                         -
                                     @endif
-                                    {{ $invdesc->amount }}
+                                    {{ number_format($invdesc->amount, 0) }}
                                 </td>
                                 <td>{{ $invdesc->note }}</td>
                                 <td>

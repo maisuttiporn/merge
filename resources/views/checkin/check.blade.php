@@ -60,7 +60,7 @@
                 <h5>
                     <i class="fa-solid fa-angles-right"></i>
                     เข้าร่วมแอร์ดรอบ 00.00 
-                    @if(count($checkin21) == 0)
+                    @if(count($checkin00) == 0)
                     0
                     @else
                     {{ $checkin00->first()->checkindesc()->where('check', '1')->count() }} 
@@ -85,7 +85,7 @@
                             </div>
                         @endif
                     @endif
-                    @if(count($checkin21) != 0) 
+                    @if(count($checkin00) != 0) 
                         @if($checkin00->first()->checkin_lock == '1')
                             <div class="alert alert-danger" role="alert">
                                 {{ $checkin00->first()->checkin_desc }} ปิดเช็คชื่อแล้ว

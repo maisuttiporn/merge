@@ -78,7 +78,7 @@
                     <div class="form-group">
                         <label for="">สลอต </label>
                         <select name="slotnumber" id="" class="form-control">
-                            <option value="0">ไม่ระบุ</option>
+                            <option value="99">ไม่ระบุ</option>
                             @for ($i = 1; $i <= 30; $i++)
                                 <option value="{{ $i }}">{{ $i }}</option>
 
