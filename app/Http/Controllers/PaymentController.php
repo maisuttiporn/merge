@@ -15,46 +15,55 @@ class PaymentController extends Controller
 
             ->whereHas('checkin', function ($q) {
                 $q->where('checkin_payment', '1');
-                $q->where('check', '1');
+                // $q->where('check', '1');
             })
+            ->where('check', '1')
             ->get();
 
         // dd($checkindescs);
 
-        return view("payment.index", compact('users', 'checkindescs'));
+        $checkins = \App\Models\Checkin::where('checkin_payment', '1')
+            ->whereHas('checkindesc', function ($q)  {
+                $q->where('check', '1');
+                $q->where('paidstat', '0');
+            })
+            ->orderBy('checkin_payerid')
+            ->get();
+
+        return view("payment.index", compact('users', 'checkindescs', 'checkins'));
     }
 
     public function desc($user_id)
     {
 
         $checkins = \App\Models\Checkin::where('checkin_payment', '1')
-        ->whereHas('checkindesc', function ($q) use ($user_id) {
-            $q->where('user_id', $user_id);
-            $q->where('check', '1'); 
-            $q->where('paidstat', '0'); 
-        })
-        ->orderBy('checkin_payerid')
-        ->get();
+            ->whereHas('checkindesc', function ($q) use ($user_id) {
+                $q->where('user_id', $user_id);
+                $q->where('check', '1');
+                $q->where('paidstat', '0');
+            })
+            ->orderBy('checkin_payerid')
+            ->get();
 
 
         $checkinpaids = \App\Models\Checkin::where('checkin_payment', '1')
-        ->whereHas('checkindesc', function ($q) use ($user_id) {
-            $q->where('user_id', $user_id);
-            $q->where('check', '1');
-            $q->where('paidstat', '1'); 
-        })
-        ->orderBy('id')
-        ->get();
+            ->whereHas('checkindesc', function ($q) use ($user_id) {
+                $q->where('user_id', $user_id);
+                $q->where('check', '1');
+                $q->where('paidstat', '1');
+            })
+            ->orderBy('id')
+            ->get();
 
         // dd($checkins);
 
         if (count($checkins) == 0) {
             $payerid = null;
         } else {
-             $payerid = $checkins->first()->checkin_payerid;
+            $payerid = $checkins->first()->checkin_payerid;
         }
 
-       
+
 
         $user = \App\Models\User::find($user_id);
         return view('payment.desc', compact('user', 'checkins', 'user_id', 'payerid', 'checkinpaids'));
@@ -63,13 +72,13 @@ class PaymentController extends Controller
     public function update($user_id, $payerid)
     {
         $checkindescs = \App\Models\Checkindesc::where('user_id', $user_id)
-        ->where('check', '1')
-        ->where('paidstat', '0')
-        ->whereHas('checkin', function ($q) use($payerid) {
-            $q->where('checkin_payment', '1');
-            $q->where('checkin_payerid', $payerid);
-        })
-        ->get();
+            ->where('check', '1')
+            ->where('paidstat', '0')
+            ->whereHas('checkin', function ($q) use ($payerid) {
+                $q->where('checkin_payment', '1');
+                $q->where('checkin_payerid', $payerid);
+            })
+            ->get();
 
         foreach ($checkindescs as $checkindesc) {
             $checkindesc->paidstat = '1';

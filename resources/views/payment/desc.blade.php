@@ -38,15 +38,18 @@
                         <strong>ยอดรวม : </strong>
                         @php
                             $total = 0;
-                           @endphp
+                        @endphp
+
                         @foreach ($checkins->where('checkin_payerid', $checkin->checkin_payerid) as $item)
+                           
                             @php
-                                $total += $item->checkindesc->first()->amount;
+                                $total += $item->checkindesc->where('user_id', $user_id)->first()->amount;
                             @endphp
                         @endforeach
-                        {{ number_format($total, 0) }} ({{ number_format($total, 0,'','') }})
 
-                        <form name="xxxx" action="{{ route('payment.update', [$user->id, $checkin->checkin_payerid]) }}"
+                        {{ number_format($total, 0) }} ({{ number_format($total, 0, '', '') }})
+
+                        <form onclick="return confirm('แน่ใจนะว่าพร้อมโอน ?')" name="xxxx" action="{{ route('payment.update', [$user->id, $checkin->checkin_payerid]) }}"
                             method="post">
                             @csrf
                             <button class="btn btn-orange">
@@ -78,7 +81,7 @@
 
 
                             <tr>
-                                <td>{{ $loop->iteration }} {{ $payerid }} : {{ $checkintable->checkin_payerid }}</td>
+                                <td>{{ $loop->iteration }} {{ $payerid }} : {{ $checkintable->id }}</td>
                                 <td>{{ thaidate('d-m-Y', $checkintable->checkin_date, false) }}</td>
                                 <td>{{ $checkintable->checkin_desc }}</td>
                                 <td>{{ $checkintable->checkin_itemdesc }}</td>
@@ -117,10 +120,10 @@
                             <th>รวมเงิน</th>
                             <th>เข้าร่วม</th>
                             <th>ต่อคน</th>
-                            <th></th>
+                            <th>จ่ายเมื่อ</th>
                         </thead>
 
-                        @foreach ($checkinpaids as $checkintable)
+                        @foreach ($checkinpaids->sortByDesc('id') as $checkintable)
 
 
 
@@ -138,7 +141,7 @@
                                 <td>
                                     {{ number_format($checkintable->Checkindesc->where('user_id', $user_id)->first()->amount, 0) }}
                                 </td>
-                                <td>{{ $checkintable->updated_at }}</td>
+                                <td>{{ $checkintable->Checkindesc->where('user_id', $user_id)->first()->updated_at }}</td>
                             </tr>
 
 

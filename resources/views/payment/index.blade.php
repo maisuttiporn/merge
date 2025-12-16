@@ -15,6 +15,37 @@
 
         <div class="row">
 
+            <div class="col-md-12 text-center">
+                @foreach ($checkins->unique('checkin_payerid') as $checkin)
+                    <h4>
+                        <i class="fa-solid fa-money-bill-wave"></i> 
+                        {{ $users->where('id', $checkin->checkin_payerid)->first()->fname }} 
+                        {{ $users->where('id', $checkin->checkin_payerid)->first()->lname }}  
+                        ถือเงินค้างจ่าย : 
+                    
+                    @php
+                        $total = 0;
+                    @endphp
+
+                    @foreach ($checkins->where('checkin_payerid', $checkin->checkin_payerid) as $item1)
+
+                        @foreach ($checkindescs as $itemdesc)
+                            @if ($item1->id == $itemdesc->checkin_id)
+                                @php
+                                    $total += $itemdesc->amount;
+                                @endphp
+                            @endif
+
+
+                        @endforeach
+
+                    @endforeach
+
+                    {{ number_format($total, 0) }} <i class="fa-solid fa-money-bill-wave"></i>
+                    </h4>
+                @endforeach
+            </div>
+
             <div class="col-md-12">
                 <table class="table table-striped">
                     <thead>
