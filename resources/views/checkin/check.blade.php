@@ -108,6 +108,7 @@
 
                             <input type="checkbox" id="switch{{ $user->id }}0"
                             @if($checkindesc21->where('user_id', $user->id)->count() != 0)
+                                
                                 @if($checkindesc21->where('user_id', $user->id)->first()->check == '1')
                                     checked
                                 @endif
@@ -152,10 +153,15 @@
 
                         <div class="switchToggle">
                             Airdrop 00.00
+                             @php echo $checkindesc00->count() @endphp
                             <input type="checkbox" id="switch{{ $user->id }}1" 
                             @if($checkindesc00->count() != 0)
-                                @if($checkindesc00->where('user_id', $user->id)->first()->check == '1')
-                                    checked
+                               @if(count($checkindesc00->where('user_id', $user->id)) > '0')
+                            
+                                    @if($checkindesc00->where('user_id', $user->id)->first()->check == '1')
+                                        checked
+                                    @endif
+                                
                                 @endif
                             @endif
 
@@ -169,14 +175,20 @@
                             <input type="hidden" name="userid_{{ $user->id }}_1" 
 
                             @if($checkindesc00->count() != 0)
-                                @if($checkindesc00->where('user_id', $user->id)->first()->check == '1')
-                                    value="1"
+                                @if(count($checkindesc00->where('user_id', $user->id)) > '0')
+                                    
+                                    @if($checkindesc00->where('user_id', $user->id)->first()->check == '1')
+                                        value="1"
+                                    @else
+                                        value="0"
+                                    @endif
                                 @else
-                                    value="0"
+                                value="0"
                                 @endif
                             @else 
-                                value="0"-
+                                value="0"
                             @endif
+
                             >
                             <label for="switch{{ $user->id }}1">Toggle</label>
 
