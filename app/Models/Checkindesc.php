@@ -13,4 +13,10 @@ class Checkindesc extends Model
     {
         return $this->belongsTo(\App\Models\Checkin::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class);
+    }
+    
 }

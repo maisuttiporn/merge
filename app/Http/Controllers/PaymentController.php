@@ -6,10 +6,15 @@ use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 class PaymentController extends Controller
 {
-    public function index()
+    public function index($all = null)
     {
-
-        $users = \App\Models\User::orderBy('fname')->get();
+        // dd($all);
+        if (is_null($all)) {
+            $users = \App\Models\User::where('slotactive', '1')->orderBy('fname')->get();
+            
+        } else {
+            $users = \App\Models\User::orderBy('fname')->get();
+        }
 
         $checkindescs = \App\Models\Checkindesc::where('paidstat', '0')
 
@@ -55,6 +60,16 @@ class PaymentController extends Controller
             ->orderBy('id')
             ->get();
 
+            // dd($checkinpaids);
+
+        $paidtotal = 0;
+        foreach ($checkinpaids as $checkinpaid) {
+            $paidtotal += $checkinpaid->checkindesc->where('user_id', $user_id)->sum('paid');
+           
+        }
+
+
+
         // dd($checkins);
 
         if (count($checkins) == 0) {
@@ -66,7 +81,7 @@ class PaymentController extends Controller
 
 
         $user = \App\Models\User::find($user_id);
-        return view('payment.desc', compact('user', 'checkins', 'user_id', 'payerid', 'checkinpaids'));
+        return view('payment.desc', compact('user', 'checkins', 'user_id', 'payerid', 'checkinpaids', 'paidtotal'));
     }
 
     public function update($user_id, $payerid)

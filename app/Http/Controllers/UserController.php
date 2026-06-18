@@ -26,6 +26,8 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->status);
+
 
         $this->validate($request, [
             'fname' => 'required|max:100',
@@ -33,7 +35,10 @@ class UserController extends Controller
             'phone' => 'required|max:100',
             // 'homenumber' => 'required|gt:0',
         ]);
-
+        $status = 0;
+        if($request->status == 1) {
+            $status = 1;
+        }
 
         $user = User::create([
             'fname' => $request->fname,
@@ -43,7 +48,8 @@ class UserController extends Controller
             'homenumber' => $request->homenumber,
             'slotnumber' => $request->slotnumber,
             'slotactive' => $request->slotactive,
-            'status' => '1',
+            'status' => $status,
+            'gun' => $request->gun,
 
             'username' => $request->phone,
             'password' => bcrypt($request->phone),
@@ -66,7 +72,10 @@ class UserController extends Controller
 
         $user = User::find($id);
 
-
+        $status = 0;
+        if($request->status == 1) {
+            $status = 1;
+        }
 
         
 
@@ -77,7 +86,8 @@ class UserController extends Controller
         $user->homenumber = $request->homenumber;
         $user->slotnumber = $request->slotnumber;
         $user->slotactive = $request->slotactive;
-        $user->status = '1';
+        $user->status = $status;
+        $user->gun = $request->gun;
 
         $user->username = $request->phone;
         $user->password = bcrypt($request->phone);

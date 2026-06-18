@@ -100,7 +100,7 @@
         .switchToggle input:checked+label,
         .switchToggle input:checked+input+label {
             /* background: #3e98d3; */
-            background:  #ff9800;
+            background: #ff9800;
         }
 
         .switchToggle input+label:before,
@@ -156,9 +156,9 @@
             text-decoration: none;
         }
 
-       .text-orange {
+        .text-orange {
             color: #ff9800;
-       }
+        }
     </style>
     @yield('js')
 </head>
@@ -170,10 +170,13 @@
         <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4  bg-white border-bottom shadow-sm">
             <h5 class="my-0 mr-md-auto font-weight-normal">
                 <a href="{{ route('main') }}">
-                    <img width="36" src="{{ asset('img/logo.png') }}">
-                    <strong class="text-dark">{{ config('app.name', 'Laravel') }}</strong></a>
+                    <img width="150" src="{{ asset('img/hmeee_logo2.png') }}">
+                    <!-- <strong class="text-dark">{{ config('app.name', 'Laravel') }}</strong></a> -->
             </h5>
             <nav class="my-2 my-md-0 mr-md-3 font-weight-bold">
+                <a class="p-2 text-dark" href="{{ route('main') }}">
+                    <i class="fa-regular fa-calendar-days"></i>
+                    สรุปเข้ากิจกรรม</a>
                 <a class="p-2 text-dark" href="{{ route('inv.index') }}">
                     <i class="fa-solid fa-vault"></i>
                     ตู้แก๊ง</a>
@@ -197,7 +200,7 @@
             @auth
                 <strong>Welcome K.{{ Auth::user()->name }} &nbsp; </strong>
                 <a href="" class="btn btn-outline-primary" onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                                         document.getElementById('logout-form').submit();">
                     Logout
                 </a>
 

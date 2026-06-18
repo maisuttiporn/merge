@@ -16,17 +16,32 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/main/{user_id?}', function ($user_id = 0) {
-
-    
-
-    $users = \App\Models\User::orderBy('fname')->get();
+    $users = \App\Models\User::where('slotactive', '1')->orderBy('fname')->get();
     if ($user_id == 0) {
         $user_id = $users->first()->id;
     }
-
     return view('main.index', compact('user_id', 'users'));
-
 })->name('main');
+
+use Illuminate\Support\Arr;
+Route::get('/airdrop/{yyyy?}', function($yyyy = null) {
+    
+    if($yyyy == null) {
+        $yyyy = date('Y');
+    }
+
+
+    
+
+    return View('main.airdrop', compact('yyyy'));
+})->name('main.airdrop');
+
+
+
+
+
+
+
 
 Auth::routes();
 
@@ -45,15 +60,17 @@ Route::put('/user/{user_id}', [UserController::class, 'update'])->name('user.upd
 Route::delete('/user/{id}', [UserController::class, 'destroy'])->name('user.destroy');
 
 
-Route::get('/checkin', [CheckinController::class, 'index'])->name('checkin.index');
+Route::get('/checkin/index/{date?}', [CheckinController::class, 'index'])->name('checkin.index');
 Route::get('/checkin/check/{homenumber?}/{date?}', [CheckinController::class, 'check'])->name('checkin.check');
 Route::post('/checkin/checksave/{homenumber}/{date}', [CheckInController::class,'checksave'])->name('checkin.checksave');
+Route::post('/checkin/checksave2/', [CheckInController::class,'checksave2'])->name('checkin.checksave2');
+Route::delete('/checkin/delete/{checkin_id}', [CheckInController::class,'destroy'])->name('checkin.destroy');
 
-Route::get('/checkin/payment/{checkin_id}', [CheckInController::class,'payment'])->name('checkin.payment');
-Route::post('/checkin/payment/{checkin_id}', [CheckInController::class,'paymentupdate'])->name('checkin.paymentupdate');
+Route::get('/checkin/payment/{checkin_id}/{date}', [CheckInController::class,'payment'])->name('checkin.payment');
+Route::post('/checkin/payment/{checkin_id}/{date}', [CheckInController::class,'paymentupdate'])->name('checkin.paymentupdate');
 
 use App\Http\Controllers\PaymentController;
-Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
+Route::get('/payment/{all?}', [PaymentController::class, 'index'])->name('payment.index');
 Route::get('/payment/desc/{user_id}',[PaymentController::class, 'desc'])->name('payment.desc');
 Route::post('/payment/update/{user_id}/{payerid}', [PaymentController::class,'update'])->name('payment.update');
 

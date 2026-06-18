@@ -30,8 +30,8 @@ Route::get('/event/{user_id?}', function($user_id) {
     foreach ($checkindescs as $checkindesc) {
         $data[] = [
             'title' => $checkindesc->checkin->checkin_desc,
-            'start' => thaidate('Y-m-d 22:00:00', $checkindesc->checkin->checkin_date, false),
-            'end' => thaidate('Y-m-d 22:10:01', $checkindesc->checkin->checkin_date, false),
+            'start' => thaidate('Y-m-d', $checkindesc->checkin->checkin_date, false). 'T' . thaidate('H:i:s', $checkindesc->checkin->checkin_date, false),
+            'end' => thaidate('Y-m-d', $checkindesc->checkin->checkin_date, false) . 'T'. thaidate('H:i:59', $checkindesc->checkin->checkin_date, false),
         ];
     }
 

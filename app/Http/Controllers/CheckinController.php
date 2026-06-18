@@ -7,11 +7,23 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class CheckinController extends Controller
 {
-    public function index()
+    public function index($date = '')
     {
-        $checkins = \App\Models\Checkin::orderBy('checkin_date', 'desc')->get();
+        if ($date == '') {
+            if (\Carbon\Carbon::now()->format('H') < 6) {
+                $date = \Carbon\Carbon::yesterday()->format('Y-m-d');
+            } else {
+                $date = \Carbon\Carbon::now()->format('Y-m-d');
+            }
+            // $date = date('Y-m-d');
+        } else {
 
-        return view("checkin.index", compact("checkins"));
+        }
+
+        $checkins = \App\Models\Checkin::where('checkin_date', 'like', "$date%")
+            ->orderBy('checkin_date', 'desc')->get();
+
+        return view("checkin.index", compact("checkins", "date"));
     }
 
 
@@ -65,10 +77,30 @@ class CheckinController extends Controller
             $checkindesc00 = $checkindesc00->first()->Checkindesc()->where('homenumber', $homenumber)->get();
         }
 
+
+        $checkindesc22 = \App\Models\Checkin::where('checkin_date', $date . ' 22:00:00')
+            ->get();
+        if ($checkindesc22->count() > 0) {
+            $checkindesc22 = $checkindesc22->first()->Checkindesc()->where('homenumber', $homenumber)->get();
+        }
+
+
+
         $checkin21 = \App\Models\Checkin::where('checkin_date', $date . ' 21:00:00')
             ->get();
         $checkin00 = \App\Models\Checkin::where('checkin_date', $date . ' 00:00:00')
             ->get();
+        $checkin22 = \App\Models\Checkin::where('checkin_date', $date . ' 22:00:00')
+            ->get();
+
+        $checkinothers = \App\Models\Checkin::where('checkin_desc', '!=', 'แอร์ดรอบ 21.00')
+            ->where('checkin_desc', '!=', 'แอร์ดรอบ 00.00')
+            ->where('checkin_desc', '!=', 'สกายฟอล 22.00')
+            ->where('checkin_date', 'like', $date . '%')
+            ->get();
+
+        // dd($checkinothers);
+
 
         return view("checkin.check", compact(
             "homelist",
@@ -77,8 +109,11 @@ class CheckinController extends Controller
             'date',
             'checkindesc21',
             'checkindesc00',
+            'checkindesc22',
             'checkin21',
             'checkin00',
+            'checkin22',
+            'checkinothers'
         ));
     }
 
@@ -88,6 +123,8 @@ class CheckinController extends Controller
         $checkpost = $request->post();
         // dd($date);
 
+        // dd($checkpost);
+
 
 
         $date = date('Y-m-d', strtotime($date));
@@ -96,6 +133,14 @@ class CheckinController extends Controller
             ->get();
         $checkin00 = \App\Models\Checkin::where('checkin_date', $date . ' 00:00:00')
             ->get();
+        $checkin22 = \App\Models\Checkin::where('checkin_date', $date . ' 22:00:00')
+            ->get();
+
+
+
+
+
+
 
         // 21.00 #############################################################################
         if ($checkin21->count() == 0) {
@@ -108,6 +153,7 @@ class CheckinController extends Controller
             $checkin->checkin_member = 0;
             $checkin->save();
             $checkin21 = $checkin;
+
         } else {
             $checkin21 = $checkin21->first();
         }
@@ -124,7 +170,7 @@ class CheckinController extends Controller
                         ->get();
 
                     if (count($checkdesc) == 0) {
-                        echo '0';
+                        // echo '0';
                         $user = \App\Models\User::where('id', $item[1])->get()->first();
                         $checkindesc = new \App\Models\Checkindesc();
                         $checkindesc->fname = $user->fname;
@@ -137,7 +183,7 @@ class CheckinController extends Controller
                         $checkindesc->save();
 
                     } else {
-                        echo '1';
+                        // echo '1';
                         $checkdesc = \App\Models\Checkindesc::find($checkdesc->first()->id);
                         $checkdesc->check = $value;
                         $checkdesc->save();
@@ -151,6 +197,61 @@ class CheckinController extends Controller
 
 
         // 21.00 #############################################################################
+
+        // 22.00 #############################################################################
+        if ($checkin22->count() == 0) {
+            $checkin = new \App\Models\Checkin();
+            $checkin->checkin_desc = 'สกายฟอล 22.00';
+            $checkin->checkin_date = $date . ' 22:00:00';
+            $checkin->checkin_payment = '0';
+            $checkin->checkin_itemdesc = '';
+            $checkin->checkin_total = 0;
+            $checkin->checkin_member = 0;
+            $checkin->save();
+            $checkin22 = $checkin;
+
+        } else {
+            $checkin22 = $checkin22->first();
+        }
+
+        foreach ($checkpost as $key => $value) {
+
+            $item = explode('_', $key); // userid_21_0
+            if ($item[0] == 'userid') {
+
+                if ($item[2] == '2') { // if 0 is 22.00
+
+                    $checkdesc = \App\Models\Checkindesc::where('checkin_id', $checkin22->id)
+                        ->where('user_id', $item[1])
+                        ->get();
+
+                    if (count($checkdesc) == 0) {
+                        // echo '0';
+                        $user = \App\Models\User::where('id', $item[1])->get()->first();
+                        $checkindesc = new \App\Models\Checkindesc();
+                        $checkindesc->fname = $user->fname;
+                        $checkindesc->lname = $user->lname;
+                        $checkindesc->homenumber = $user->homenumber;
+                        // $checkindesc->amount = 0;
+                        $checkindesc->check = $value;
+                        $checkindesc->user_id = $item[1];
+                        $checkindesc->checkin_id = $checkin22->id;
+                        $checkindesc->save();
+
+                    } else {
+                        // echo '1';
+                        $checkdesc = \App\Models\Checkindesc::find($checkdesc->first()->id);
+                        $checkdesc->check = $value;
+                        $checkdesc->save();
+                    }
+                }
+            }
+        }
+
+
+        // 22.00 #############################################################################
+
+
 
 
 
@@ -182,7 +283,7 @@ class CheckinController extends Controller
                         ->get();
 
                     if (count($checkdesc) == 0) {
-                        echo '0';
+                        // echo '0';
                         $user = \App\Models\User::where('id', $item[1])->get()->first();
                         $checkindesc = new \App\Models\Checkindesc();
                         $checkindesc->fname = $user->fname;
@@ -195,7 +296,7 @@ class CheckinController extends Controller
                         $checkindesc->save();
 
                     } else {
-                        echo '1';
+                        // echo '1';
                         $checkdesc = \App\Models\Checkindesc::find($checkdesc->first()->id);
                         $checkdesc->check = $value;
                         $checkdesc->save();
@@ -206,6 +307,42 @@ class CheckinController extends Controller
             }
         }
 
+
+
+        // #################################  save checkinothers
+        foreach ($checkpost as $key => $value) {
+            $item = explode('_', $key); // "checkinother_14_61" => null userid   checkinid
+            if ($item[0] == 'checkinother') {
+
+                $checkdesc = \App\Models\Checkindesc::where('checkin_id', $item[2])
+                    ->where('user_id', $item[1])
+                    ->get();
+
+                if (count($checkdesc) == 0) {
+                    $user = \App\Models\User::where('id', $item[1])->get()->first();
+                    $checkindesc = new \App\Models\Checkindesc();
+                    $checkindesc->fname = $user->fname;
+                    $checkindesc->lname = $user->lname;
+                    $checkindesc->homenumber = $user->homenumber;
+                    // $checkindesc->amount = 0;
+                    $checkindesc->check = $value;
+                    $checkindesc->user_id = $item[1];
+                    $checkindesc->checkin_id = $item[2];
+                    $checkindesc->save();
+                } else {
+                    $checkdesc = \App\Models\Checkindesc::find($checkdesc->first()->id);
+                    $checkdesc->check = $value;
+                    $checkdesc->save();
+                }
+
+
+            }
+        }
+
+
+        // ################################# save checkinothers
+
+        // dd($checkpost);
 
         Alert::success('บันทึกสำเร็จ', 'Success Message');
         return redirect()->route('checkin.check', [$homenumber, $date]);
@@ -306,16 +443,16 @@ class CheckinController extends Controller
 
     }
 
-    public function payment($checkin_id)
+    public function payment($checkin_id, $date)
     {
         $checkin = \App\Models\Checkin::find($checkin_id);
         $users = \App\Models\User::orderBy('fname')->get();
 
-        return View('checkin.payment', compact('checkin', 'users'));
+        return View('checkin.payment', compact('checkin', 'users', 'date'));
 
     }
 
-    public function paymentupdate($checkin_id, Request $request)
+    public function paymentupdate($checkin_id, Request $request, $date)
     {
         // dd($request);
         if ($request->checkin_payment == '1') {
@@ -323,14 +460,14 @@ class CheckinController extends Controller
 
             if ($request->checkin_payerid == '0') {
                 Alert::error('จำเป็นต้องระบุคนจ่ายเงิน', 'Error Message');
-                return redirect()->route('checkin.payment', $checkin_id);
+                return redirect()->route('checkin.payment', [$checkin_id, $date]);
 
 
             } else {
 
                 if ($request->checkin_lock == '0') {
                     Alert::error('จำเป็นต้องปิดเช็คชื่อ', 'Error Message');
-                    return redirect()->route('checkin.payment', $checkin_id);
+                    return redirect()->route('checkin.payment', [$checkin_id, $date]);
                 } else {
                     $checkin = \App\Models\Checkin::find($checkin_id);
 
@@ -374,7 +511,7 @@ class CheckinController extends Controller
 
 
                     Alert::success('บันทึกสำเร็จ', 'Success Message');
-                    return redirect()->route('checkin.payment', $checkin_id);
+                    return redirect()->route('checkin.payment', [$checkin_id, $date]);
                 }
 
 
@@ -406,11 +543,55 @@ class CheckinController extends Controller
 
 
             Alert::success('บันทึกสำเร็จ', 'Success Message');
-            return redirect()->route('checkin.payment', $checkin_id);
+            return redirect()->route('checkin.payment', [$checkin_id, $date]);
 
 
 
         }
+
+    }
+
+    public function checksave2(Request $request)
+    {
+
+
+        $this->validate($request, [
+            'checkin_desc' => 'required|max:100',
+        ]);
+
+
+        $checkin = new \App\Models\Checkin();
+        $checkin->checkin_desc = $request->checkin_desc;
+        $checkin->checkin_date = $request->checkin_date . ' ' . $request->checkin_datehh . ':' . $request->checkin_datemm . ':01';
+
+        // dd( $checkin);
+        $checkin->save();
+
+        Alert::success('บันทึกสำเร็จ', 'Success Message');
+        return redirect()->route('checkin.index');
+
+
+    }
+
+    public function destroy($checkin_id)
+    {
+
+        $checkin = \App\Models\Checkin::find($checkin_id);
+
+
+        $checkindescs = \App\Models\Checkindesc::where('checkin_id', $checkin_id)->get();
+
+        // dd($checkindescs);
+
+        foreach ($checkindescs as $checkindesc) {
+            $checkindesc->delete();
+        }
+
+
+        $checkin->delete();
+
+        Alert::success('บันทึกสำเร็จ', 'Success Message');
+        return redirect()->route('checkin.index')->with('success', '');
 
     }
 

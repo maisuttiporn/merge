@@ -24,6 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('slotnumber');
             $table->string('slotactive');
             $table->string('status');
+            $table->string('gun')->default('ไม่มี');
 
 
 

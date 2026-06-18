@@ -14,7 +14,7 @@
                 <div class="col-md-12 mt-5">
                     <h4>
                         <i class="fa-solid fa-users"></i> เพิ่มสมาชิก
-                        <a class="btn btn-primary btn-sm " href="{{ route('user.index') }}"> <i
+                        <a class="btn btn-orange btn-sm " href="{{ route('user.index') }}"> <i
                                 class="fa-solid fa-circle-left"></i> กลับ</a>
                     </h4>
                 </div>
@@ -97,12 +97,37 @@
                     </div>
                 </div>
 
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="">ปืน </label>
+                        <select name="gun" class="form-control">
+                            <option value="ไม่มี">ไม่มี</option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+                </div>
 
+
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-12 ">
+                    <div class="form-check ml-1">
+                        <input class="form-check-input" type="checkbox" checked name="status" value="1">
+                        <label class="form-check-label" for="defaultCheck1">
+                            สลอตหลัก
+                        </label>
+                    </div>
+                </div>
             </div>
 
             <div class="row">
                 <div class="col-md-12">
-                    <button class="btn btn-primary">
+                    <button class="btn btn-orange">
                         <i class="fa-solid fa-floppy-disk"></i>
                         บันทึก</button>
                 </div>

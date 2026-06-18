@@ -36,8 +36,8 @@
                         <label for="">ผู้ครอบครอง</label>
                         <select name="user_id" id="" class="form-control">
                             <option value="0">ไม่ระบุ</option>
-                            @foreach ($users as $user)
-                                <option value="{{ $user->id }}">{{ $user->fname }}</option>
+                            @foreach ($users->where('slotactive', '1')->sortBy('fname') as $user)
+                                <option value="{{ $user->id }}">{{ $user->fname }} {{ $user->lname }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -175,7 +175,7 @@
                             <th></th>
                             <th></th>
                         </thead>
-                        @foreach ($inv->invdesc->sortByDesc('id') as $invdesc)
+                        @foreach ($inv->invdesc->sortByDesc('id')->take(25) as $invdesc)
                             <tr
                             style="background-color:  @if($invdesc->type == 0) lightgreen @else orange @endif;"
                             >

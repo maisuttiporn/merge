@@ -18,7 +18,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name', 'email', 'password','username',
-        'fname','lname','phone','homesup','homenumber','slotnumber','slotactive','status'
+        'fname','lname','phone','homesup','homenumber','slotnumber','slotactive','status', 'gun'
     ];
 
 
@@ -58,6 +58,15 @@ class User extends Authenticatable
                 return 'ในสลอต';   
         } else {
             return '';
+        }
+    }
+
+    public function status()
+    {
+        if ($this->status == 1) {
+                return 'หลัก';   
+        } else {
+            return '🐌 ชิลด์';
         }
     }
 

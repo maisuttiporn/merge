@@ -57,6 +57,21 @@
                     @endif
                     คน 
                 </h5>
+
+                <h5>
+                    <i class="fa-solid fa-angles-right"></i>
+                    เข้าร่วมสกายฟอล 22.00
+                    @if(count($checkin00) == 0)
+                    0
+                    @else
+                        @if(count($checkin22) > 0) 
+                            {{ $checkin22->first()->checkindesc()->where('check', '1')->count() }} 
+
+                        @endif
+                    @endif
+                    คน 
+                </h5>
+
                 <h5>
                     <i class="fa-solid fa-angles-right"></i>
                     เข้าร่วมแอร์ดรอบ 00.00 
@@ -85,12 +100,31 @@
                             </div>
                         @endif
                     @endif
+                    @if(count($checkin22) != 0) 
+                        @if($checkin22->first()->checkin_lock == '1')
+                            <div class="alert alert-danger" role="alert">
+                                {{ $checkin22->first()->checkin_desc }} ปิดเช็คชื่อแล้ว
+                            </div>
+                        @endif
+                    @endif
                     @if(count($checkin00) != 0) 
                         @if($checkin00->first()->checkin_lock == '1')
                             <div class="alert alert-danger" role="alert">
                                 {{ $checkin00->first()->checkin_desc }} ปิดเช็คชื่อแล้ว
                             </div>
                         @endif
+                    @endif
+
+                    @if(count($checkinothers) != 0) 
+                        @foreach ($checkinothers as $checkinother)
+                            @if($checkinother->checkin_lock == '1')
+                                <div class="alert alert-danger" role="alert">
+                                    {{ $checkinother->checkin_desc }} {{ \Carbon\Carbon::parse($checkinother->checkin_date)->format('H:i') }}
+                                     ปิดเช็คชื่อแล้ว
+                                </div>
+                            @endif
+                        @endforeach
+                        
                     @endif
                 <hr>
             </div>
@@ -104,7 +138,8 @@
 
 
                         <div class="switchToggle">
-                            Airdrop 21.00 {{ '' }}
+                            Airdrop 21.00 
+                            {{-- | {{ $checkindesc21->where('user_id', $user->id)->first()->check ?? '' }} --}}
 
                             <input type="checkbox" id="switch{{ $user->id }}0"
                             @if($checkindesc21->where('user_id', $user->id)->count() != 0)
@@ -132,28 +167,61 @@
                             @endif
                             
                             >
-                            <label for="switch{{ $user->id }}0">Toggle</label>
+                            <label for="switch{{ $user->id }}0"
+                                {{-- @if ($checkin21->first()->checkin_lock == 1)
+                                    style="background: #ff0000;"
+                                @endif --}}
+                                
+                                >Toggle</label>
 
-                            <!-- @if(count($checkindesc21->where('user_id', $user->id)))
-                                @if($checkindesc21->where('user_id', $user->id)->first()->check == '1')
+                            
+                            
+                        </div>
+
+                        <div class="switchToggle">
+                            Skyfall 22.00 
+                            {{-- | {{ $checkindesc22->where('user_id', $user->id)->first()->check ?? '' }} --}}
+
+                            <input type="checkbox" id="switch{{ $user->id }}2"
+                            @if($checkindesc22->where('user_id', $user->id)->count() != 0)
+                                
+                                @if($checkindesc22->where('user_id', $user->id)->first()->check == '1')
+                                    checked
+                                @endif
+                            @endif
+                            @if(count($checkin22) != 0) 
+                                @if ($checkin22->first()->checkin_lock == 1)
+                                    disabled
+                                @endif
+                            @endif
+
+                            >
+
+                            <input type="hidden" name="userid_{{ $user->id }}_2" 
+
+                            @if(count($checkindesc22->where('user_id', $user->id)))
+                                @if($checkindesc22->where('user_id', $user->id)->first()->check == '1')
                                     value="1"
                                 @else
                                     value="0"
                                 @endif
                             @else 
                                 value="0"
-                            @endif -->
-                            
-                            
+                            @endif
+                            >
+                            <label for="switch{{ $user->id }}2"
+                                {{-- @if ($checkin22->first()->checkin_lock == 1)
+                                    style="background: #ff0000;"
+                                @endif --}}
                                 
-                                
-                            
-
+                                >Toggle</label>
                         </div>
 
                         <div class="switchToggle">
-                            Airdrop 00.00
-                             @php echo $checkindesc00->count() @endphp
+                            Airdrop 00.00  
+                            {{-- | {{ $checkindesc00->where('user_id', $user->id)->first()->check ?? '' }} --}}
+                             @php //echo $checkindesc00->count(); 
+                             @endphp
                             <input type="checkbox" id="switch{{ $user->id }}1" 
                             @if($checkindesc00->count() != 0)
                                @if(count($checkindesc00->where('user_id', $user->id)) > '0')
@@ -190,7 +258,13 @@
                             @endif
 
                             >
-                            <label for="switch{{ $user->id }}1">Toggle</label>
+                            <label for="switch{{ $user->id }}1"
+
+                                {{-- @if ($checkin00->first()->checkin_lock == 1)
+                                    style="background: #ff0000;"
+                                @endif --}}
+                                
+                                >Toggle</label>
 
                             <!-- @if(count($checkindesc00->where('user_id', $user->id)))
                                 @if($checkindesc00->where('user_id', $user->id)->first()->check == '1')
@@ -201,9 +275,77 @@
                             @else 
                                 value="0"
                             @endif -->
-
                             
                         </div>
+
+                        @if(count($checkinothers) > 0)
+                            @foreach ($checkinothers as $checkinother)
+
+                            <div class="switchToggle">
+                               {{ $checkinother->checkin_desc }} {{ \Carbon\Carbon::parse($checkinother->checkin_date)->format('H:i') }}
+
+                               
+                               
+                               <input type="checkbox" id="switch{{ $user->id }}{{ $checkinother->id }}" 
+                               @if (count($checkinother->checkindesc->where('user_id', $user->id)) > 0)
+
+                                    @if ($checkinother->checkindesc->where('user_id', $user->id)->first()->check == 1)
+                                        checked 
+                                    @else 
+                                        
+                                    @endif
+                            
+                                
+                                @else
+                                    
+                                @endif
+
+
+                                @if ($checkinother->checkin_lock == 1)
+                                    disabled
+                                @endif
+                               
+                               
+                               >
+
+                               
+
+                                <input type="hidden" name="checkinother_{{ $user->id }}_{{ $checkinother->id }}"  
+
+                                @if (count($checkinother->checkindesc->where('user_id', $user->id)) > 0)
+
+                                    @if ($checkinother->checkindesc->where('user_id', $user->id)->first()->check == 1)
+                                        value="1"
+                                    @else 
+                                        value="0"
+                                    @endif
+                            
+                                
+                                @else
+                                    value="0"
+                                @endif
+                                
+                                    
+                                
+
+                            >
+                            <label for="switch{{ $user->id }}{{ $checkinother->id }}"
+
+                                {{-- @if ($checkinother->checkin_lock == 1)
+                                    style="background: #ff0000;"
+                                @endif --}}
+
+                                >Toggle</label>
+                            @if (count($checkinother->checkindesc->where('user_id', $user->id)) > 0)
+                               
+                                <!-- {{ $checkinother->checkindesc->where('user_id', $user->id)->first()->check }} -->
+                            @else
+                                
+                            @endif
+                            </div>
+
+                            @endforeach
+                        @endif
 
                     </div>
                 @endforeach

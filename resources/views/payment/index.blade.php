@@ -64,7 +64,22 @@
                                 @if ($checkindescs->where('user_id', $user->id)->count() > 0)
                                     {{ $checkindescs->where('user_id', $user->id)->count() }}
                                     กิจกรรม
+                                    @php $payer_id = null; @endphp
+                                    @foreach ($checkindescs->where('user_id', $user->id) as $checkindesc)
+                                        @if ($payer_id != $checkindesc->checkin->checkin_payerid)
+                                            @php $payer_id = $checkindesc->checkin->checkin_payerid; @endphp
+                                            <small>({{ $user->find($payer_id)->fname }})</small>
+                                        @endif
+                                    {{-- {{ $checkindesc->checkin }} --}}
+                                        {{-- @foreach ($checkindesc1->checkin as $checkin1)
+                                            {{ $checkin1->id }}
+                                        @endforeach --}}
+                                    @endforeach
+
                                 @endif
+
+
+
                             </td>
                             <td>
                                 @if ($checkindescs->where('user_id', $user->id)->count() > 0)
@@ -88,6 +103,12 @@
             </div>
 
 
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-md-12 ">
+                <a href="{{ route('payment.index', 'all') }}" class="btn btn-block btn-orange">Show All <i class="fa-solid fa-angles-down"></i></a>
+            </div>
         </div>
 
 

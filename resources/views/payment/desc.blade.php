@@ -49,6 +49,8 @@
 
                         {{ number_format($total, 0) }} ({{ number_format($total, 0, '', '') }})
 
+                         
+                        <strong>50% : </strong> {{ number_format($total/2, 0, '', '') }}
                         <form onclick="return confirm('แน่ใจนะว่าพร้อมโอน ?')" name="xxxx" action="{{ route('payment.update', [$user->id, $checkin->checkin_payerid]) }}"
                             method="post">
                             @csrf
@@ -83,7 +85,13 @@
                             <tr>
                                 <td>{{ $loop->iteration }} {{ $payerid }} : {{ $checkintable->id }}</td>
                                 <td>{{ thaidate('d-m-Y', $checkintable->checkin_date, false) }}</td>
-                                <td>{{ $checkintable->checkin_desc }}</td>
+                                <td>
+                                    @if ($checkintable->checkin_desc=='แอร์ดรอบ 21.00' || $checkintable->checkin_desc=='แอร์ดรอบ 00.00')
+                                        {{ $checkintable->checkin_desc }}
+                                    @else
+                                        {{ $checkintable->checkin_desc }} {{ thaidate('H:i', $checkintable->checkin_date, false) }}
+                                    @endif
+                                </td>
                                 <td>{{ $checkintable->checkin_itemdesc }}</td>
                                 <td>{{ $user->where('id', $checkintable->checkin_payerid)->first()->fname }}</td>
                                 <td>{{ number_format($checkintable->checkin_total, 0) }}</td>
@@ -109,7 +117,7 @@
 
                 <div class="col-md-12">
                     <hr>
-                    <h4><strong>ประวัติการจ่ายเงิน</strong></h4>
+                    <h4><strong>ประวัติการจ่ายเงิน รวม : {{ number_format($paidtotal, 0) }}</strong></h4>
                     <table class="table table-strip">
                         <thead>
                             <th>ลำดับ</th>
@@ -131,7 +139,13 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ thaidate('d-m-Y', $checkintable->checkin_date, false) }}</td>
-                                <td>{{ $checkintable->checkin_desc }}</td>
+                                <td>
+                                    @if ($checkintable->checkin_desc=='แอร์ดรอบ 21.00' || $checkintable->checkin_desc=='แอร์ดรอบ 00.00')
+                                        {{ $checkintable->checkin_desc }}
+                                    @else
+                                        {{ $checkintable->checkin_desc }} {{ thaidate('H:i', $checkintable->checkin_date, false) }}
+                                    @endif
+                                </td>
                                 <td>{{ $checkintable->checkin_itemdesc }}</td>
                                 <td>{{ $user->where('id', $checkintable->checkin_payerid)->first()->fname }}</td>
                                 <td>{{ number_format($checkintable->checkin_total, 0) }}</td>

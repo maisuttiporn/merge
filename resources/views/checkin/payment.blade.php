@@ -3,7 +3,7 @@
 
 
 @section('content')
-    <form name="xx" action="{{ route('checkin.paymentupdate', $checkin->id) }}" method="post">
+    <form name="xx" action="{{ route('checkin.paymentupdate', [$checkin->id, $date]) }}" method="post">
         @csrf
         <div class="container">
             <div class="row">
@@ -17,7 +17,7 @@
                         </strong></h4>
                     <h4>{{ thaidate('l ที่ j F Y', $checkin->checkin_date, false) }}
 
-                    <a class="btn btn-orange btn-sm " href="{{ route('checkin.index') }}"> <i
+                    <a class="btn btn-orange btn-sm " href="{{ route('checkin.index', $date) }}"> <i
                                 class="fa-solid fa-circle-left"></i> กลับ</a>
                     </h4>
 
@@ -38,7 +38,7 @@
                         <label for="">คนจ่ายเงิน <small class="text-danger">***</small></label>
                         <select name="checkin_payerid" class="form-control">
                             <option value="0">ไม่ระบุ</option>
-                            @foreach ($users as $user)
+                            @foreach ($users->where('slotactive', '1') as $user)
                                 <option value="{{ $user->id }}" 
                                 @if($checkin->checkin_payerid == $user->id) selected @endif>
                                     {{ $user->fname }} {{ $user->lname }}
@@ -75,7 +75,7 @@
                         <label for="">ของที่ได้รับ</label>
                         <input name="checkin_itemdesc" type="text" class="form-control" 
                         @if(empty($checkin->checkin_itemdesc))
-                            value="กล่องปฐมพยาบาล 5 กล่องตีอาวุธ xx"
+                            value=""
                         @else
                             value="{{ $checkin->checkin_itemdesc }}"
                         @endif
